@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <p id="demo">
+            Lat <input type="text" id="lat"/><br>
+            Lng <input type="text" id="lng"/><br>
+            <p id="no_geo"></p>
+            <button type="button" onclick="getLocation()">show me location</button>
+            <button type="button" onclick="getManual()">Manual Near By location</button>
+        </p>
+        <p id="res"></p>
+        <script>
+            var x = document.getElementById("demo");
+            function getLocation() {
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition,geoError);
+                
+                
+              } else {
+                  $("#no_geo").html("Geolocation not available");
+                  if($("#lat").val()!="" && $("#lng").val()!=""){
+                        api_call();
+                    } 
+              }
+
+            }
+            function showPosition(position) {
+                    $("#lat").val(position.coords.latitude);
+                    $("#lng").val(position.coords.longitude);
+                    if($("#lat").val()!="" && $("#lng").val()!=""){
+                            api_call($("#lat").val(),$("#lng").val());
+                    }
+//   x.innerHTML = "Latitude: " + position.coords.latitude + 
+//   "<br>Longitude: " + position.coords.longitude;
+}
+
+function getManual(){
+    if($("#lat").val()!="" && $("#lng").val()!=""){
+                            api_call($("#lat").val(),$("#lng").val());
+                    }
+
+}
+var geoError = function(code, message) {
+    if($("#lat").val()!="" && $("#lng").val()!=""){
+                            api_call($("#lat").val(),$("#lng").val());
+                    }
+};
+           function api_call(lat,lon){
+
+            $.ajax({
+        url: "https://pinballmap.com/api/v1/locations/closest_by_lat_lon.json?lat="+lat+"&lon="+lon,
+        type: 'GET',
+        success: function(res) {
+            console.log(res);
+            $("#res").html(JSON.stringify(res));
+            
+        }
+    });
+           
+
+
+           }
+            </script>
+
+    </body>
+</html>
