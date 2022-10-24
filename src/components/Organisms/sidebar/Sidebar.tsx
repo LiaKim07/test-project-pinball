@@ -21,7 +21,7 @@ export default function Sidebar() {
     const { setUser } = useContext(UserContext);
 
     const handleChange = (e: any) => {
-        setvalues({ ...values, [e.name]: isNaN(Number((e.value as string))) ? e.value : Number((e.value as string)) });
+        setvalues({ ...values, [e.name]: e.value });
     };
 
     const handleSubmit = async () => {

@@ -12,7 +12,7 @@ export default function InputNormal<T>({
     value = '',
     name,
     className = '',
-    min = 0,
+    min,
     max,
     inputColor = '#212529',
     bgStyles = true,
@@ -37,11 +37,11 @@ export default function InputNormal<T>({
             name={name}
             type={type}
             value={value}
-            spellCheck="true"
+            // spellCheck="true"
             readOnly={readonly}
             required={required}
-            min={min}
-            max={max}
+            // min={min}
+            // max={max}
             style={{ color: inputColor, backgroundColor: 'white' }}
             autoComplete="off"
             className={`${bgStyles ? 'bg-styles' : ''} ${className}`}
