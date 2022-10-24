@@ -1,14 +1,9 @@
 import React, { FormEvent, useState, useContext, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import UserContext from '../../../contexts/UserContext';
-import { ValueType } from '../../../types';
-import { LoginDto } from '../../../types/services/auth.types';
 import Details from "../../Molecules/custom/Details";
-import Checkbox from '../../Atoms/Form/Checkbox';
-import Input from '../../Atoms/Form/Input';
-import Button from '../../Molecules/Button/Button';
+import Collapsible from '../../Molecules/Modal/Collapsible';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -20,28 +15,24 @@ export default function SignInForm() {
     }
 
   }, [user]);
+  console.log('result', location.locations)
 
-  let basicInfo = {},
-    locationInfo = {},
-    otherInfo = {}
+  let basicInfo: any = [];
 
-  if (location?.location) {
-    console.log('test', location)
-    basicInfo = {
-      Name: location.location.name,
-      Address: `${location.location.zip}, ${location.location.city}, ${location.location.country}`,
-      Street: location.location.street,
-      State: location.location.state,
-      Phone: location.location.phone,
-      Website: location.location.website
-    }
-    locationInfo = {
-      Latitude: location.location.lat,
-      Longitude: location.location.lon,
-      Distance: location.location.distance,
-      Bearing: location.location.bearing
-    }
-    otherInfo = Object.assign({}, location.location.machine_names);
+  if (location?.locations) {
+    location?.locations?.forEach((item: any) => {
+      let objectData = {
+        Name: item.name,
+        Address: `${item.zip}, ${item.city}, ${item.country}`,
+        Street: item.street,
+        State: item.state,
+        Phone: item.phone,
+        Website: item.website,
+        Latitude: item.lat,
+        Longitude: item.lon,
+      }
+      basicInfo.push(objectData)
+    })
   }
 
   return (
@@ -49,20 +40,17 @@ export default function SignInForm() {
       {
         location.errors ?
           <p>{location.errors}</p> :
-          location.location ?
-            <div className="row">
-              <div className="col-12 col-md-6">
-                <Details title="Personal Information" data={basicInfo} />
+          basicInfo && location.locations ?
+            location.locations?.map((item: any, key: number) => (
+              <div key={key} className="row">
+                <Collapsible isOpen={key === 0 ? true : false} title={`${item.name} Information`}>
+                  <div className="col-12 col-md-6">
+                    <Details title={``} data={basicInfo[key]} />
+                  </div>
+                </Collapsible>
               </div>
-
-              <div className="col-12 col-md-6">
-                <Details title="Location Information" data={locationInfo} />
-              </div>
-
-              <div className="col-12 col-md-6">
-                <Details title="Other Information" data={otherInfo} />
-              </div>
-            </div> : null
+            ))
+            : null
       }
     </div>
   );

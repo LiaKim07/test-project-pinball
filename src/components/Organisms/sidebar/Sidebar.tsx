@@ -18,7 +18,9 @@ const defaultState: any = {
 export default function Sidebar() {
     const [values, setvalues] = useState<any>({ ...defaultState });
     const { mutateAsync } = findPinBall.getByData();
+    const { mutateAsync: FetchLocation } = findPinBall.getLocation();
     const { setUser } = useContext(UserContext);
+    const [fetchData, setFetchData] = useState<any>();
 
     const handleChange = (e: any) => {
         setvalues({ ...values, [e.name]: e.value });
@@ -30,7 +32,16 @@ export default function Sidebar() {
             async onSuccess(data: any) {
                 toast.success('Location was found successfully', { id: toastId });
                 queryClient.invalidateQueries(['productgroups']);
-                setUser(data);
+                // setUser(data);
+                setFetchData(data);
+                let postitionData: any = {};
+                if (data.data.region) {
+                    postitionData = {
+                        lat: data.data.region.lat,
+                        lng: data.data.region.lon
+                    }
+                }
+                setvalues(postitionData)
             },
             onError(error: any) {
                 toast.error('error occurred please try again', {
@@ -41,49 +52,8 @@ export default function Sidebar() {
     };
 
     const handleSearch = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, geoError);
-        } else {
-            const toastId = toast.loading('searching ....');
-            mutateAsync(values, {
-                async onSuccess(data: any) {
-                    toast.success('', { id: toastId });
-                    queryClient.invalidateQueries(['productgroups']);
-                    setUser(data);
-                },
-                onError(error: any) {
-                    toast.error('error occurred please try again', {
-                        id: toastId,
-                    });
-                },
-            });
-        }
-    };
-
-    const showPosition = (position: any) => {
-        let postitionData = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        }
-        setvalues(postitionData)
         const toastId = toast.loading('searching ....');
-        mutateAsync(postitionData, {
-            async onSuccess(data: any) {
-                toast.success('Search finished', { id: toastId });
-                queryClient.invalidateQueries(['productgroups']);
-                setUser(data);
-            },
-            onError(error: any) {
-                toast.error('error occurred please try again', {
-                    id: toastId,
-                });
-            },
-        });
-    }
-
-    const geoError = () => {
-        const toastId = toast.loading('searching ....');
-        mutateAsync(values, {
+        FetchLocation(fetchData.data.region.name, {
             async onSuccess(data: any) {
                 toast.success('', { id: toastId });
                 queryClient.invalidateQueries(['productgroups']);
@@ -95,7 +65,7 @@ export default function Sidebar() {
                 });
             },
         });
-    }
+    };
 
     return (
         <React.Fragment>
