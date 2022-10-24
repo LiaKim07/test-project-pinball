@@ -53,10 +53,11 @@ export default function Sidebar() {
 
     const handleSearch = () => {
         const toastId = toast.loading('searching ....');
-        FetchLocation(fetchData.data.region.name, {
+        FetchLocation(values, {
             async onSuccess(data: any) {
                 toast.success('', { id: toastId });
                 queryClient.invalidateQueries(['productgroups']);
+                console.log('jlkjl=>', data)
                 setUser(data);
             },
             onError(error: any) {

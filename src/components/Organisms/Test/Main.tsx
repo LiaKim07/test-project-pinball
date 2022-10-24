@@ -15,7 +15,7 @@ export default function SignInForm() {
     }
 
   }, [user]);
-  console.log('result', location.locations)
+  console.log('result', location)
 
   let basicInfo: any = [];
 

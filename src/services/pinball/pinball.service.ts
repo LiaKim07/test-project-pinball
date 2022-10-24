@@ -8,7 +8,7 @@ class PinBallService {
     }
 
     public async getLocation(data: any): Promise<AxiosResponse<any>> {
-        return await customAxios.get(`/v1/region/${data}/locations.json`);
+        return await customAxios.get(`/v1/locations/closest_by_lat_lon.json?lat=${data.lat}&lon=${data.lng}&send_all_within_distance=true`);
     }
 }
 
